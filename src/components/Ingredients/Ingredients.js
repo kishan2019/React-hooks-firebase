@@ -6,6 +6,7 @@ import IngredientList from './IngredientList';
 
 const Ingredients = () => {
   const [userIngredient, setUserIngrediant] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const filterIngredientHandler = useCallback(filterIngredients => {
     setUserIngrediant(filterIngredients);
@@ -28,11 +29,13 @@ const Ingredients = () => {
   }, []);
 
   const addIngredientHandler = ingredient => {
+    setIsLoading(true);
     fetch('https://react-hooks-update-459d5.firebaseio.com/ingredients.json', {
       method: 'POST',
       body: JSON.stringify(ingredient),
       headers: { 'Content-Type': 'application/json' }
     }).then(response => {
+      setIsLoading(false);
       return response.json();
     }).then(responseData => {
       setUserIngrediant(prevIngredient => [
@@ -43,10 +46,12 @@ const Ingredients = () => {
   };
 
   const removeIngredientHandler = ingredientId => {
+    setIsLoading(true)
     fetch(`https://react-hooks-update-459d5.firebaseio.com/ingredients/${ingredientId}.json`,{
       method: 'DELETE'
     })
     .then(response => {
+      setIsLoading(false)
       setUserIngrediant(prevIngredients =>
         prevIngredients.filter(ingredient => ingredient.id !== ingredientId)
       );
@@ -55,7 +60,7 @@ const Ingredients = () => {
 
   return (
     <div className="App">
-      <IngredientForm onAddIngredient={addIngredientHandler} />
+      <IngredientForm onAddIngredient={addIngredientHandler} loading={isLoading}/>
 
       <section>
         <Search onLoadIngredients={filterIngredientHandler} />
