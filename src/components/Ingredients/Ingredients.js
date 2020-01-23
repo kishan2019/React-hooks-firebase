@@ -1,4 +1,4 @@
-import React, { useReducer,useState, useEffect, useCallback } from 'react';
+import React, { useReducer, useCallback } from 'react';
 
 import IngredientForm from './IngredientForm';
 import Search from './Search';
@@ -37,48 +37,21 @@ const httpReducer = (currhttpState, action) => {
 const Ingredients = () => {
   const [userIngredient, dispatch] = useReducer(ingredientReducer, []);
   const [httpState, dispatchHttp] = useReducer(httpReducer, {loading: false, error: null});
-  //const [userIngredient, setUserIngrediant] = useState([]);
-  // const [isLoading, setIsLoading] = useState(false);
-  // const [error, setError] = useState();
-
+ 
   const filterIngredientHandler = useCallback(filterIngredients => {
-    // setUserIngrediant(filterIngredients);
     dispatch({type: 'SET', ingredients: filterIngredients });
   }, []);
 
-  // useEffect(() => {
-  //   fetch('https://react-hooks-update-459d5.firebaseio.com/ingredients.json')
-  //     .then(response => response.json())
-  //     .then(responseData => {
-  //       const loadedIngredient = [];
-  //       for (let key in responseData) {
-  //         loadedIngredient.push({
-  //           id: key,
-  //           title: responseData[key].title,
-  //           amount: responseData[key].amount
-  //         });
-  //       }
-  //       //setUserIngrediant(loadedIngredient);
-  //       dispatch({type: 'SET', ingredients: loadedIngredient });
-  //     });
-  // }, []);
-
   const addIngredientHandler = ingredient => {
-    // setIsLoading(true);
     dispatchHttp({type: 'SEND'})
     fetch('https://react-hooks-update-459d5.firebaseio.com/ingredients.json', {
       method: 'POST',
       body: JSON.stringify(ingredient),
       headers: { 'Content-Type': 'application/json' }
     }).then(response => {
-      // setIsLoading(false);
       dispatchHttp({type: 'RESPONSE'})
       return response.json();
     }).then(responseData => {
-      // setUserIngrediant(prevIngredient => [
-      //   ...prevIngredient,
-      //   { id: responseData.name, ...ingredient }
-      //]);
       dispatch({type: 'ADD', ingredient: { id: responseData.name, ...ingredient }})
     });
   };
@@ -90,9 +63,6 @@ const Ingredients = () => {
     })
       .then(response => {
         dispatchHttp({type: 'RESPONSE'})
-        // setUserIngrediant(prevIngredients =>
-          // prevIngredients.filter(ingredient => ingredient.id !== ingredientId)
-       // );
        dispatch({type: 'DELETE', id: ingredientId})
       })
       .catch(error => {
